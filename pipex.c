@@ -1,38 +1,18 @@
-//
-// Created by mlays on 24.06.2021.
-//
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include "../minishell/libft/libft.h"
-
-char *get_data_path(char *argument, char **env, char ***arg_data);
+#include "pipex.h"
 
 int main (int argc, char **argv, char **env)
 {
     char *in_name = argv[1];
-//    char *cmd = argv[1];
-    char *cmd2 = argv[3];
     char *out_name = argv[4];
     int fds_pair[2];
 
     char **arg_data;
     char *path;
 
-//    path = get_data_path(argv, env, &arg_data);
-
-
     int in = open(in_name, O_RDONLY);
     int out = open(out_name, O_CREAT | O_WRONLY | O_TRUNC, S_IRWXU);
 
-
-    execve(path, arg_data, env);
-
     pipe(fds_pair);
-
     pid_t pid = fork();
     if (pid == 0)
     {

@@ -1,18 +1,7 @@
-//
-// Created by mlays on 25.06.2021.
-//
-
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include "../minishell/libft/libft.h"
+#include "pipex.h"
 
 char *get_data_path(char *argument, char **env, char ***arg_data)
 {
-
     char **path;
     char *path_tmp;
     char *tmp;
@@ -40,7 +29,7 @@ char *get_data_path(char *argument, char **env, char ***arg_data)
             return(path_tmp);
         close(fd);
         free(path_tmp);
-        path_tmp = "\0";
     }
+    return (0);
 }
 
