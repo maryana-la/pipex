@@ -1,2 +1,2 @@
 all:
-	gcc -g pipex.c ../minishell/libft/libft.a
+	gcc -g pipex.c exec.c ../minishell/libft/libft.a
