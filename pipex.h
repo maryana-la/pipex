@@ -7,7 +7,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include "../minishell/libft/libft.h"
+#include "../libft/libft.h"
 
 char *get_data_path(char *argument, char **env, char ***arg_data);
 
