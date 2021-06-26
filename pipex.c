@@ -1,5 +1,9 @@
 #include "pipex.h"
 
+//./a.out Makefile rev nl out
+
+
+
 int main (int argc, char **argv, char **env)
 {
     char *in_name = argv[1];
