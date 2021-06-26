@@ -24,7 +24,7 @@ char *get_data_path(char *argument, char **env, char ***arg_data)
     {
         path_tmp = ft_strjoin(path[i], "/");
         path_tmp = ft_strjoin(path_tmp, *arg_data[0]);
-        fd = open(path_tmp, O_RDONLY);
+        fd = open(path_tmp, O_RDONLY); //use access command!
         if (fd > 0)
             return(path_tmp);
         close(fd);
