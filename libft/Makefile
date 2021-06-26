@@ -18,11 +18,11 @@ SRCS	=	ft_memcpy.c ft_memmove.c ft_memset.c ft_atoi.c ft_strchr.c ft_bzero.c ft_
 			ft_split.c ft_itoa.c ft_putchar_fd.c ft_putstr_fd.c ft_putendl_fd.c ft_putnbr_fd.c \
 			get-next-line/get_next_line.c get-next-line/get_next_line_utils.c
 OBJS	=	${SRCS:.c=.o}
-FLAGS	=	-Wall -Wextra -Werror
+FLAGS	=	-g
 CC		=	gcc
 RM		=	rm -f
 
-%.o:	%.c	libft.h get_next_line.h
+%.o:	%.c	libft.h
 			${CC} ${FLAGS} -c $< -o $@
 
 ${NAME}:	${OBJS}

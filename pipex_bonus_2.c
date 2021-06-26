@@ -17,7 +17,9 @@ int pipex_bonus_2(int argc, char **argv, char **env)
 	ret = 1;
 	out_name = argv[5];
 	fd_temp = open("tmp_gnl", O_CREAT | O_RDWR | O_TRUNC, S_IRWXU);
-//	fd_out = open(out_name, O_CREAT | O_WRONLY | O_TRUNC, S_IRWXU);
+	fd_out = open(out_name, O_CREAT | O_WRONLY | O_APPEND, S_IRWXU);
+
+	pipe(fds_pair);
 
 	while (ret)
 	{
@@ -29,13 +31,14 @@ int pipex_bonus_2(int argc, char **argv, char **env)
 		write (fd_temp, "\n", 1);
 	}
 
-	pipe(fds_pair);
+	close(fd_temp);
+	fd_temp = open("tmp_gnl", O_RDONLY);
 	pid_t pid = fork();
 	if (pid == 0)
 	{
 		close(fds_pair[0]);
 		dup2(fd_temp, 0);
-		close (fd_temp);
+		close(fd_temp);
 		dup2(fds_pair[1], 1);
 		close(fds_pair[1]);
 		path = get_data_path(argv[3], env, &arg_data);
@@ -49,7 +52,7 @@ int pipex_bonus_2(int argc, char **argv, char **env)
 			close(fds_pair[1]);
 			dup2(fds_pair[0], 0);
 			close(fds_pair[0]);
-//			dup2(fd_out, 1);
+			dup2(fd_out, 1);
 			path = get_data_path(argv[4], env, &arg_data);
 			execve(path, arg_data, env);
 		}
@@ -60,5 +63,5 @@ int pipex_bonus_2(int argc, char **argv, char **env)
 		}
 	}
 	waitpid(pid, 0, 0);
-	return 0;
+	exit (9);
 }
