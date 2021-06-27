@@ -4,8 +4,6 @@ int pipex_bonus_2(int argc, char **argv, char **env);
 
 int main(int argc, char *argv[], char **env)
 {
-	char *in_name;
-	char *out_name;
 	char **arg_data;
 	char *path;
 	int fd_in;
@@ -15,22 +13,26 @@ int main(int argc, char *argv[], char **env)
 	int fdd;
 	int i;
 
+	errno = 0;
 	if (ft_strncmp(argv[1], "here_doc", 9) == 0)
 		pipex_bonus_2(argc, argv, env);
 	else {
-		in_name = argv[1];
-		out_name = argv[argc - 1];
-		fd_in = open(in_name, O_RDONLY);
-		fd_out = open(out_name, O_CREAT | O_WRONLY | O_TRUNC, S_IRWXU);
+		fd_in = open(argv[1], O_RDONLY);
+		fd_out = open(argv[argc - 1], O_CREAT | O_WRONLY | O_APPEND, S_IRWXU);
 
 		fdd = 0;
 		i = 1;
-		while (i < (argc - 2)) {
+		while (i < (argc - 2))
+		{
 			pipe(fd);
-			if ((pid = fork()) == -1) {
-				perror("fork");
+			pid = fork();
+			if (pid == -1)
+			{
+				strerror(errno);
 				exit(1);
-			} else if (pid == 0) {
+			}
+			else if (pid == 0)
+			{
 				if (i == 1)
 					dup2(fd_in, 0);
 				else
@@ -43,7 +45,9 @@ int main(int argc, char *argv[], char **env)
 				path = get_data_path(argv[i + 1], env, &arg_data);
 				execve(path, arg_data, env);
 				exit(1);
-			} else {
+			}
+			else
+			{
 				wait(NULL);
 				close(fd[1]);
 				fdd = fd[0];
