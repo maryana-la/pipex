@@ -11,26 +11,27 @@ int pipex_bonus_2(int argc, char **argv, char **env)
 	pid_t pid;
 	int fdd = 0;
 
-	ret = 1;
+
 	fd_out = open(argv[argc - 1], O_CREAT | O_WRONLY | O_APPEND, S_IRWXU);
 
 	int i = 2;
 	while (i < (argc - 1))
 	{
 		pipe(fd);
-		if ((pid = fork()) == -1)
+		if (pid == -1)
 		{
-			perror("fork");
+			strerror(errno);
 			exit(1);
 		}
 		else if (pid == 0)
 		{
 			if (i == 2)
 			{
+				ret = 1;
 				close(fd[0]);
 				while (ret)
 				{
-					write(0, "pipex_heredoc> ", 14);
+					write(0, "pipex_heredoc> ", 15);
 					ret = get_next_line(0, &line);
 					if (ft_strncmp(line, argv[2], ft_strlen(argv[2]) + 1) == 0)
 						break;
