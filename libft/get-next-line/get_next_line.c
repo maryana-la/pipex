@@ -78,6 +78,7 @@ int		get_next_line(int fd, char **line)
 	char		*tmp;
 	int count;
 
+	buffer = "\0";
 	if (fd < 0 || BUFFER_SIZE < 1 || !line || (count = read(fd, buffer, 0)) < 0 ||
 			!(buffer = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1))))
 		return (-1);
