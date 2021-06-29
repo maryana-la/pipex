@@ -9,7 +9,6 @@
 # include <sys/wait.h>
 # include <sys/errno.h>
 # include "libft/libft.h"
-# include "libft/get-next-line/get_next_line.h"
 
 # define FILE_ERR	2
 # define FORK_ERR	3

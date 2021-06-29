@@ -1,7 +1,3 @@
-#	@rm -f pipex.o
-#	@make OBJ="$(OBJ_BON)" all
-
-
 NAME	=	pipex
 
 CC		=	gcc
@@ -19,15 +15,17 @@ HEADERS	=	libft/libft.h pipex.h
 LIBFT	=	libft/libft.a
 
 %.o : %.c $(HEADERS)
-	@$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 all: $(NAME)
 
 $(NAME): $(LIBFT) $(OBJ)
 	$(CC) $(CFLAGS) $(LIBFT) $(OBJ) -o $(NAME)
 
-bonus: $(LIBFT) $(OBJ_BON)
-	$(CC) $(CFLAGS) $(LIBFT) $(OBJ_BON) -o $(NAME)
+bonus:
+bonus: $(OBJ_BON)
+	@rm -f pipex.o
+	@make OBJ="$(OBJ_BON)" all
 
 $(LIBFT):
 	$(MAKE) -C libft
