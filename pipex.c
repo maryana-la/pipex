@@ -1,9 +1,10 @@
 #include "pipex.h"
 
-//./a.out Makefile rev nl out
-//
-//
-//
+// ./pipex Makefile rev nl outfile
+// ./pipex tolstoy.txt rev nl outfile
+// ./pipex Makefile "cat -e" outfile
+
+
 int main (int argc, char **argv, char **env)
 {
     int fds_pair[2];
@@ -22,13 +23,13 @@ int main (int argc, char **argv, char **env)
 		exit(1);
 	}
 	in = open(argv[1], O_RDONLY);
-	if (in < 0)
+	if (in < 0 || read(in, 0, 0) < 0)
 	{
 		perror(argv[1]);
 		exit(2);
 	}
 	out = open(argv[4], O_CREAT | O_WRONLY | O_TRUNC, S_IRWXU);
-	if (out < 0)
+	if (out < 0 || read(in, 0, 0) < 0)
 	{
 		perror(argv[4]);
 		exit(2);

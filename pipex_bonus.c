@@ -1,9 +1,9 @@
 #include "pipex.h"
 
-// ./bonus Makefile rev nl "cat -e" outfile - norm
-//./bonus tolstoy.txt rev nl "cat -e" outfile - big file
-// ./bonus here_doc eof rev nl "cat -e" outfile0
-// ./bonus here_doc eof rev nerwerl "cat -e" outfile
+// ./pipex Makefile rev nl "cat -e" outfile - norm
+//./pipex tolstoy.txt rev nl "cat -e" outfile - big file
+// ./pipex here_doc eof rev nl "cat -e" outfile0
+// ./pipex here_doc eof rev nerwerl "cat -e" outfile
 
 
 
@@ -28,8 +28,8 @@ int main(int argc, char *argv[], char **env)
 		flag = 1;
 	if (flag == 1)
 	{
-		fd_tmp = open("tmp_file", O_CREAT | O_RDWR | O_TRUNC, S_IRWXU);
-		if (fd_tmp < 0)
+		fd_in = open("tmp_file", O_CREAT | O_RDWR | O_TRUNC, S_IRWXU);
+		if (fd_in < 0 || read(fd_in, 0, 0) < 0)
 		{
 			perror(argv[1]);
 			exit(2);
@@ -44,13 +44,23 @@ int main(int argc, char *argv[], char **env)
 				free(line);
 				break;
 			}
-			write(fd_tmp, line, ft_strlen(line));
-			write(fd_tmp, "\n", 1);
+			write(fd_in, line, ft_strlen(line));
+			write(fd_in, "\n", 1);
 			free(line);
 		}
-		close (fd_tmp);
+		close (fd_in);
 		fd_in = open("tmp_file", O_RDONLY);
+		if (fd_in < 0 || read(fd_in, 0, 0) < 0)
+		{
+			perror(argv[1]);
+			exit(2);
+		}
 		fd_out = open(argv[argc - 1], O_CREAT | O_WRONLY | O_APPEND, S_IRWXU);
+		if (fd_out < 0 || read(fd_out, 0, 0) < 0)
+		{
+			perror(argv[1]);
+			exit(2);
+		}
 	}
 	else
 	{
@@ -120,6 +130,14 @@ int main(int argc, char *argv[], char **env)
 	close(fd[1]);
 	close(fdd);
 	close (fd_in);
+	if (flag == 1)
+	{
+		if (unlink("tmp_file") == -1)
+		{
+			perror("unlink");
+			exit(5);
+		}
+	}
 	close(fd_out);
 
 	return(0);
