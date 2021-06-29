@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rchelsea <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: jjacquel <jjacquel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/17 23:01:12 by rchelsea          #+#    #+#             */
-/*   Updated: 2020/11/20 21:30:15 by rchelsea         ###   ########.fr       */
+/*   Created: 2020/11/04 17:04:47 by jjacquel          #+#    #+#             */
+/*   Updated: 2020/11/06 18:25:03 by jjacquel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,18 @@
 
 int	ft_memcmp(const void *s1, const void *s2, size_t n)
 {
-	unsigned char	*ss1;
-	unsigned char	*ss2;
+	unsigned char	*temp_s1;
+	unsigned char	*temp_s2;
 	size_t			i;
-	int				res;
 
+	temp_s1 = (unsigned char *)s1;
+	temp_s2 = (unsigned char *)s2;
 	i = 0;
-	res = 0;
-	ss1 = (unsigned char *)s1;
-	ss2 = (unsigned char *)s2;
-	while (i < n && ss1[i] == ss2[i])
+	while (i < n)
+	{
+		if (temp_s1[i] != temp_s2[i])
+			return (temp_s1[i] - temp_s2[i]);
 		i++;
-	if (i < n)
-		res = ss1[i] - ss2[i];
-	return (res);
+	}
+	return (0);
 }

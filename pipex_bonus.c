@@ -1,144 +1,116 @@
 #include "pipex.h"
 
 // ./pipex Makefile rev nl "cat -e" outfile - norm
-//./pipex tolstoy.txt rev nl "cat -e" outfile - big file
-// ./pipex here_doc eof rev nl "cat -e" outfile0
+// ./pipex tolstoy.txt rev nl "cat -e" outfile - big file
+// ./pipex here_doc eof rev nl "cat -e" outfile
 // ./pipex here_doc eof rev nerwerl "cat -e" outfile
 
-
-
-int main(int argc, char *argv[], char **env)
+static void	read_from_stdin (t_pipex *pip, char *stop)
 {
-	char **arg_data;
-	char *path;
-	char *line;
-	int fd_in;
-	int fd_out;
-	int fd_tmp;
-	int fd[2];
-	pid_t pid;
-	int fdd;
-	int i;
-	int flag;
-	int ret;
+	char	*line;
+	int		ret;
 
-	errno = 0;
-	flag = 0;
-	if (ft_strncmp(argv[1], "here_doc", 9) == 0)
-		flag = 1;
-	if (flag == 1)
+	ret = 1;
+	while (ret)
 	{
-		fd_in = open("tmp_file", O_CREAT | O_RDWR | O_TRUNC, S_IRWXU);
-		if (fd_in < 0 || read(fd_in, 0, 0) < 0)
-		{
-			perror(argv[1]);
-			exit(2);
-		}
-		ret = 1;
-		while (ret)
-		{
-			write(0, "pipex_heredoc> ", 15);
-			ret = get_next_line(0, &line);
-			if (ft_strncmp(line, argv[2], ft_strlen(argv[2]) + 1) == 0)
-			{
-				free(line);
-				break;
-			}
-			write(fd_in, line, ft_strlen(line));
-			write(fd_in, "\n", 1);
-			free(line);
-		}
-		close (fd_in);
-		fd_in = open("tmp_file", O_RDONLY);
-		if (fd_in < 0 || read(fd_in, 0, 0) < 0)
-		{
-			perror(argv[1]);
-			exit(2);
-		}
-		fd_out = open(argv[argc - 1], O_CREAT | O_WRONLY | O_APPEND, S_IRWXU);
-		if (fd_out < 0 || read(fd_out, 0, 0) < 0)
-		{
-			perror(argv[1]);
-			exit(2);
-		}
+		write(0, "pipex_heredoc> ", 15);
+		ret = get_next_line(0, &line);
+		if (ft_strncmp(line, stop, ft_strlen(stop) + 1) == 0)
+			break ;
+		write(pip->fd_in, line, ft_strlen(line));
+		write(pip->fd_in, "\n", 1);
+		ft_free_line(line);
+	}
+	ft_free_line(line);
+}
+
+static void	heredoc_fd_init(t_pipex *pip, int argc, char **argv)
+{
+	pip->flag = 1;
+	pip->arg_count = argc;
+	pip->fd_in = open("tmp_file", O_CREAT | O_RDWR | O_TRUNC, S_IRWXU);
+	if (pip->fd_in < 0 || read(pip->fd_in, 0, 0) < 0)
+		ft_error_exit(argv[1], FILE_ERR);
+	read_from_stdin (pip, argv[2]);
+	close (pip->fd_in);
+	pip->fd_in = open("tmp_file", O_RDONLY);
+	if (pip->fd_in < 0 || read(pip->fd_in, 0, 0) < 0)
+		ft_error_exit("tmp_file", FILE_ERR);
+	pip->fd_out = open(argv[argc - 1], O_CREAT | O_WRONLY | O_APPEND, S_IRWXU);
+	if (pip->fd_out < 0 || (access(argv[argc - 1], W_OK) == -1))
+		ft_error_exit(argv[argc - 1], FILE_ERR);
+	pip->fd_tmp = 0;
+}
+
+static void	call_child_bonus(t_pipex *pip, int i, char **argv, char **env)
+{
+	if ((i == 2 && pip->flag == 0) || (i == 3 && pip->flag == 1))
+	{
+		dup2(pip->fd_in, 0);
+		close(pip->fd_in);
 	}
 	else
+		dup2(pip->fd_tmp, 0);
+	close(pip->fds[0]);
+	if (i + 2 != pip->arg_count)
+		dup2(pip->fds[1], 1);
+	else if (i + 2 == pip->arg_count)
+		dup2(pip->fd_out, 1);
+	close(pip->fds[1]);
+	pip->path = get_data_path(argv[i], env, pip);
+	if (execve(pip->path, pip->arg_data, env) == -1)
 	{
-		fd_in = open(argv[1], O_RDONLY);
-		if (fd_in < 0)
-		{
-			perror(argv[1]);
-			exit(2);
-		}
-		fd_out = open(argv[argc - 1], O_CREAT | O_WRONLY | O_TRUNC, S_IRWXU);
+		ft_free_line(pip->path);
+		ft_free_array(pip->arg_data);
+		ft_putstr_fd(argv[i], 2);
+		ft_putstr_fd(" : command not found\n", 2);
+		exit (0);
 	}
-	if (fd_out < 0)
-	{
-		close(fd_in);
-		perror(argv[argc - 1]);
-		exit(2);
-	}
+	ft_free_line(pip->path);
+	ft_free_array(pip->arg_data);
+	exit(0);
+}
 
-	fdd = 0;
-
-	i = 2;
-	if (flag == 1)
-		i = 3;
-	while (i < (argc - 1))
-	{
-		errno = 0;
-		pipe(fd);
-		pid = fork();
-		if (pid == -1)
-		{
-			perror("fork");
-			exit(-1);
-		}
-		else if (pid == 0)
-		{
-			if ((i == 2 && flag == 0) || (i == 3 && flag == 1))
-			{
-				dup2(fd_in, 0);
-				close(fd_in);
-			}
-			else
-				dup2(fdd, 0);
-			close(fd[0]);
-
-			if (i + 2 != argc)
-				dup2(fd[1], 1);
-			else if (i + 2 == argc)
-				dup2(fd_out, 1);
-			close(fd[1]);
-			path = get_data_path(argv[i], env, &arg_data);
-			if (execve(path, arg_data, env) == -1)
-			{
-				ft_free_line(path);
-				ft_free_array(arg_data);
-				ft_putstr_fd(argv[i], 2);
-				ft_putstr_fd(" : command not found\n", 2);
-				exit (0);
-			}
-			exit(0);
-		}
-		close(fd[1]);
-		fdd = fd[0];
-		i++;
-	}
-	wait(NULL);
-	close(fd[0]);
-	close(fd[1]);
-	close(fdd);
-	close (fd_in);
-	if (flag == 1)
+static int	close_fd_at_exit(t_pipex *pip)
+{
+	close(pip->fds[0]);
+	close(pip->fds[1]);
+	close(pip->fd_tmp);
+	close (pip->fd_in);
+	if (pip->flag == 1)
 	{
 		if (unlink("tmp_file") == -1)
-		{
-			perror("unlink");
-			exit(5);
-		}
+			ft_error_exit("unlink", FILE_ERR);
 	}
-	close(fd_out);
+	close(pip->fd_out);
+	return (0);
+}
 
-	return(0);
+int	main(int argc, char **argv, char **env)
+{
+	pid_t	pid;
+	t_pipex	pip;
+	int		i;
+
+	pip.flag = 0;
+	if (ft_strncmp(argv[1], "here_doc", 9) == 0)
+		heredoc_fd_init(&pip, argc, argv);
+	else
+		fd_init(&pip, argc, argv);
+	i = 1;
+	if (pip.flag == 1)
+		i = 2;
+	while (++i < (argc - 1))
+	{
+		pipe(pip.fds);
+		pid = fork();
+		if (pid == -1)
+			ft_error_exit("fork", FORK_ERR);
+		else if (pid == 0)
+			call_child_bonus(&pip, i, argv, env);
+		close(pip.fds[1]);
+		pip.fd_tmp = pip.fds[0];
+	}
+	wait(NULL);
+	return (close_fd_at_exit(&pip));
 }

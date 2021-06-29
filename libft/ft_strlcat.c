@@ -3,35 +3,36 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strlcat.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rchelsea <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: jjacquel <jjacquel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/16 14:43:50 by rchelsea          #+#    #+#             */
-/*   Updated: 2020/11/24 01:29:58 by rchelsea         ###   ########.fr       */
+/*   Created: 2020/11/04 20:39:11 by jjacquel          #+#    #+#             */
+/*   Updated: 2020/11/12 18:38:57 by jjacquel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-size_t	ft_strlcat(char *restrict dst, const char *restrict src, size_t dstsize)
+size_t	ft_strlcat(char *dst, const char *src, size_t dstsize)
 {
 	size_t	i;
 	size_t	j;
-	size_t	sum;
+	size_t	z;
 
 	i = 0;
 	j = 0;
-	while (dst[i] != '\0' && i < dstsize)
+	z = 0;
+	while (src[z])
+		z++;
+	while (dst[i] && i < dstsize)
 		i++;
-	while (src[j])
-		j++;
-	sum = i + j;
-	j = 0;
-	while (src[j] != '\0' && (i + j + 1) < dstsize)
+	while (src[j] && i + j + 1 < dstsize)
 	{
 		dst[i + j] = src[j];
 		j++;
 	}
-	if (i < dstsize)
+	if (i != dstsize)
 		dst[i + j] = '\0';
-	return (sum);
+	if (*dst == 0)
+		return (ft_strlen(src));
+	return (i + z);
 }

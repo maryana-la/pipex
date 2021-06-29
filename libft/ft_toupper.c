@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_toupper.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rchelsea <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: jjacquel <jjacquel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/19 15:19:31 by rchelsea          #+#    #+#             */
-/*   Updated: 2020/11/19 23:55:22 by rchelsea         ###   ########.fr       */
+/*   Created: 2020/11/02 21:45:31 by jjacquel          #+#    #+#             */
+/*   Updated: 2020/11/12 17:34:33 by jjacquel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,7 @@
 
 int	ft_toupper(int c)
 {
-	if (c >= 'a' && c <= 'z')
+	if (c >= 97 && c <= 122)
 		return (c - 32);
-	else
-		return (c);
+	return (c);
 }

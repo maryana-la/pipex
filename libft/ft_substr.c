@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_substr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rchelsea <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: jjacquel <jjacquel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/20 22:50:51 by rchelsea          #+#    #+#             */
-/*   Updated: 2020/11/22 21:43:01 by rchelsea         ###   ########.fr       */
+/*   Created: 2020/11/06 19:21:41 by jjacquel          #+#    #+#             */
+/*   Updated: 2020/11/13 14:06:49 by jjacquel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,27 +14,27 @@
 
 char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
-	char			*new;
-	unsigned int	i;
+	size_t		i;
+	size_t		dlina;
+	char		*temp;
 
-	if (!s)
-		return (NULL);
-	new = (char *)malloc(len + 1);
-	if (new == NULL)
+	if (s == '\0')
 		return (NULL);
 	i = 0;
-	if (ft_strlen(s) <= start)
+	temp = (char *)malloc((len + 1) * sizeof(char));
+	if (temp == NULL)
+		return (NULL);
+	dlina = ft_strlen(s);
+	if (start >= dlina)
 	{
-		*new = 0;
-		return (new);
+		temp[i] = '\0';
+		return (temp);
 	}
-	if (ft_strlen(s) > start)
+	while (i < len)
 	{
-		while (s[start] && i < len)
-			new[i++] = s[start++];
-		new[i] = '\0';
-		return (new);
+		temp[i] = s[start + i];
+		i++;
 	}
-	else
-		return (0);
+	temp[i] = '\0';
+	return (temp);
 }
