@@ -22,10 +22,10 @@ all: $(NAME)
 $(NAME): $(LIBFT) $(OBJ)
 	$(CC) $(CFLAGS) $(LIBFT) $(OBJ) -o $(NAME)
 
-bonus:
-bonus: $(OBJ_BON)
+
+bonus: $(LIBFT) $(OBJ_BON)
 	@rm -f pipex.o
-	@make OBJ="$(OBJ_BON)" all
+	$(CC) $(CFLAGS) $(LIBFT) $(OBJ_BON) -o $(NAME)
 
 $(LIBFT):
 	$(MAKE) -C libft

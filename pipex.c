@@ -1,13 +1,5 @@
 #include "pipex.h"
 
-// ./pipex Makefile rev nl outfile
-// ./pipex tolstoy.txt rev nl outfile
-// ./pipex Makefile "cat -e" outfile
-// ./pipex libft rev nl outfile
-// chmod 000 outfile
-// ./pipex Makefile rev nl outfile
-// ./pipex Makefile rev nsdfl outfile
-
 static void	call_child(t_pipex *pip, int i, char **argv, char **env)
 {
 	if (i == 2)
@@ -50,7 +42,7 @@ int	main(int argc, char **argv, char **env)
 		pipe(pip.fds);
 		pid = fork();
 		if (pid == -1)
-			ft_error_exit("fork", FORK_ERR);
+			ft_error_exit("fork", &pip, FORK_ERR);
 		else if (pid == 0)
 			call_child(&pip, i, argv, env);
 		close (pip.fds[1]);

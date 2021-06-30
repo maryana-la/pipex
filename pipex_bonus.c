@@ -1,10 +1,5 @@
 #include "pipex.h"
 
-// ./pipex Makefile rev nl "cat -e" outfile - norm
-// ./pipex tolstoy.txt rev nl "cat -e" outfile - big file
-// ./pipex here_doc eof rev nl "cat -e" outfile
-// ./pipex here_doc eof rev nerwerl "cat -e" outfile
-
 static void	read_from_stdin (t_pipex *pip, char *stop)
 {
 	char	*line;
@@ -30,15 +25,15 @@ static void	heredoc_fd_init(t_pipex *pip, int argc, char **argv)
 	pip->arg_count = argc;
 	pip->fd_in = open("tmp_file", O_CREAT | O_RDWR | O_TRUNC, S_IRWXU);
 	if (pip->fd_in < 0 || read(pip->fd_in, 0, 0) < 0)
-		ft_error_exit(argv[1], FILE_ERR);
+		ft_error_exit(argv[1], pip, FILE_ERR);
 	read_from_stdin (pip, argv[2]);
 	close (pip->fd_in);
 	pip->fd_in = open("tmp_file", O_RDONLY);
 	if (pip->fd_in < 0 || read(pip->fd_in, 0, 0) < 0)
-		ft_error_exit("tmp_file", FILE_ERR);
+		ft_error_exit("tmp_file", pip, FILE_ERR);
 	pip->fd_out = open(argv[argc - 1], O_CREAT | O_WRONLY | O_APPEND, S_IRWXU);
 	if (pip->fd_out < 0 || (access(argv[argc - 1], W_OK) == -1))
-		ft_error_exit(argv[argc - 1], FILE_ERR);
+		ft_error_exit(argv[argc - 1], pip, FILE_ERR);
 	pip->fd_tmp = 0;
 }
 
@@ -80,7 +75,7 @@ static int	close_fd_at_exit(t_pipex *pip)
 	if (pip->flag == 1)
 	{
 		if (unlink("tmp_file") == -1)
-			ft_error_exit("unlink", FILE_ERR);
+			ft_error_exit("unlink", pip, FILE_ERR);
 	}
 	close(pip->fd_out);
 	return (0);
@@ -105,7 +100,7 @@ int	main(int argc, char **argv, char **env)
 		pipe(pip.fds);
 		pid = fork();
 		if (pid == -1)
-			ft_error_exit("fork", FORK_ERR);
+			ft_error_exit("fork", &pip, FORK_ERR);
 		else if (pid == 0)
 			call_child_bonus(&pip, i, argv, env);
 		close(pip.fds[1]);

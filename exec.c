@@ -23,7 +23,7 @@ char	*get_pwd_exec(char *argument, char **env, t_pipex *pip)
 	if (access(exec, X_OK) != 0)
 	{
 		ft_free_line(exec);
-		ft_error_exit(argument, FILE_ERR);
+		ft_error_exit(argument, pip, FILE_ERR);
 	}
 	return (exec);
 }
@@ -79,7 +79,7 @@ char	*get_data_path(char *argument, char **env, t_pipex *pip)
 		return (get_pwd_exec(argument, env, pip));
 	pip->arg_data = ft_split(argument, ' ');
 	if (!(pip->arg_data))
-		ft_error_exit("malloc", MALLOC_ERR);
+		ft_error_exit("malloc", pip, MALLOC_ERR);
 	path_str = get_path_from_env(env);
 	path_arr = ft_split(path_str, ':');
 	if (!path_arr)

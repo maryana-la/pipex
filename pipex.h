@@ -41,7 +41,7 @@ char	*get_pwd_exec(char *argument, char **env, t_pipex *pip);
 
 void	ft_free_array(char **arr);
 void	ft_free_line(char *line);
-void	ft_error_exit (char *str, int err);
+void	ft_error_exit (char *str, t_pipex *pip, int err);
 void	fd_init(t_pipex *pip, int argc, char **argv);
 
 #endif
