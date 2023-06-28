@@ -7,6 +7,8 @@ void	fd_init(t_pipex *pip, int argc, char **argv)
 		if (argc != 5)
 		{
 			ft_putstr_fd("Wrong number of arguments\n", 1);
+			ft_putstr_fd("Usage: ./pipex file1 cmd1 cmd2 file2\n", 1);
+			ft_putstr_fd("Bonus: ./pipex file1 cmd1 cmd2 ... cmdn file2\n", 1);
 			exit(1);
 		}
 	}

@@ -4,6 +4,8 @@ CC		=	gcc
 
 CFLAGS 	=	-g -Wall -Wextra -Werror
 
+RM		= rm -f
+
 SRC		:=	pipex.c exec.c pipex_utils.c
 SRC_BON	:=	pipex_bonus.c pipex_utils.c exec.c
 
@@ -24,20 +26,20 @@ $(NAME): $(LIBFT) $(OBJ)
 
 
 bonus: $(LIBFT) $(OBJ_BON)
-	@rm -f pipex.o
+	@$(RM) pipex.o
 	$(CC) $(CFLAGS) $(LIBFT) $(OBJ_BON) -o $(NAME)
 
 $(LIBFT):
 	$(MAKE) -C libft
 
 clean:
-	rm -f $(OBJ)
-	rm -f $(OBJ_BON)
-	@make clean -C libft/
+	$(RM) $(OBJ)
+	$(RM) $(OBJ_BON)
+	make clean -C libft/
 
 fclean: clean
 	@make fclean -C libft/
-	rm -f $(NAME)
+	$(RM) $(NAME)
 
 re: fclean all
 
